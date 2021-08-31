@@ -245,6 +245,7 @@ int test_put_non_empty(void) {
 //   fprintf(stderr, "%s passed\n", testName);
 //   return 0;
 // }
+//
 // test get with empty list (both head and tail)
 // if (*(int *)(deq_head_get(deqTest)) != 3) {
 //     fprintf(stderr, "%s failed: Deq head get failed %d\n", testName, deq_len(deqTest));
