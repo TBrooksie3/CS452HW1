@@ -23,7 +23,39 @@ static Rep rep(Deq q) {
   return (Rep)q;
 }
 
-static void put(Rep r, End e, Data d) {printf("hey");}
+// Puts a piece of data (void *) in R (*Rep) at end e (Head (0)/Tail(1))
+static void put(Rep r, End e, Data d) {
+  if (r == NULL || d == NULL) {
+    fprintf(stderr, "invalid arguments to put call\n");
+    exit(-1);
+  }
+
+  if (e != Head || e != Tail) {
+    fprintf(stderr, "End is invalid\n");
+    exit(-1);
+  }
+
+  Node newNode = (Node)malloc(sizeof(*newNode));
+  newNode->data = d;
+
+  if (r->len == 0) {
+    newNode->np[Head] = 0;
+    newNode->np[Tail] = 0;
+    r->ht[Head] = newNode;
+    r->ht[Tail] = newNode;
+  } else if (e == Head) {
+    Node head = r->ht[Head];
+    newNode->np[Tail] = head;
+    head->np[Head] = newNode;
+    r->ht[Head] = newNode;
+  } else {
+    Node tail = r->ht[Tail];
+    newNode->np[Head] = tail;
+    tail->np[Tail] = newNode;
+    r->ht[Tail] = newNode;
+  }
+  r->len++;
+}
 
 static Data ith(Rep r, End e, int i) { return 0; }
 static Data get(Rep r, End e) { return 0; }

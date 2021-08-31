@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "deq.h"
-#include "tests.c"
+#include "tests.h"
 
 int main() {
   int status = run_tests();

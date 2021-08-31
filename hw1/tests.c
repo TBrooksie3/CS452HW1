@@ -11,6 +11,24 @@
 #include "deq.h"
 #include "error.h"
 
+// declaring important variables from deq.c
+typedef enum {Head,Tail,Ends} End;
+
+typedef struct Node {
+  struct Node *np[Ends];		// next/prev neighbors
+  Data data;
+} *Node;
+
+typedef struct {
+  Node ht[Ends];			// head/tail nodes
+  int len;
+} *Rep;
+
+static Rep rep(Deq q) {
+  if (!q) ERROR("zero pointer");
+  return (Rep)q;
+}
+
 // test create destroy deq
 int test_create_destroy(void){
   char testName[] = "Create Destroy Test";
@@ -42,26 +60,17 @@ int test_deq_len_empty(void) {
   return 0;
 }
 
-// create deq with 1, 2, 3, 4 from head to tail
-Deq create_deq_4_items() {
-  int i = 1; int j = 2; int k = 3; int x = 4;
-  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
-  Deq deqTest = deq_new();
-  deq_head_put(deqTest, p4);
-  deq_head_put(deqTest, p3);
-  deq_head_put(deqTest, p2);
-  deq_head_put(deqTest, p1);
-  
-  return deqTest;
-}
-
 // test get deq length of deq with items
 int test_deq_len_full(void) {
   char testName[] = "Deq Length 4 Item List Test";
-
-  Deq deqTest = create_deq_4_items();
-  if (deq_len(deqTest) != 4) {
-    fprintf(stderr, "%s failed: Deq length should be 4 but is %d\n", testName, deq_len(deqTest));
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k;
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+  if (deq_len(deqTest) != 3) {
+    fprintf(stderr, "%s failed: Deq length should be 3 but is %d\n", testName, deq_len(deqTest));
     return 1;
   }
 
@@ -73,31 +82,178 @@ int test_deq_len_full(void) {
 // test put with empty list (both head and tail)
 int test_put_empty(void) {
   char testName[] = "Put in Empty List Test";
+
+  //test for head put
   int i = 3;
   int *p = &i;
   Deq deqTest = deq_new();
   deq_head_put(deqTest, p); 
+  
+  Node head = rep(deqTest)->ht[Head];
+  Node tail = rep(deqTest)->ht[Tail];
+  if (tail == 0 || head == 0) {
+     fprintf(stderr, "%s failed: head or tail are 0/null\n", testName);
+     return 1;
+  }
 
-  if (*(int *)(deq_head_get(deqTest)) != 3) {
-    fprintf(stderr, "%s failed: Deq head put/get failed %d\n", testName, deq_len(deqTest));
+  if (*(int *)(head->data) != 3 || *(int *)(tail->data) != 3) {
+    fprintf(stderr, "%s failed: head or tail are not correct value\n", testName);
     return 1;
   }
-  
+
+  if (head->np[Head] != 0 || head->np[Tail] != 0) {
+    fprintf(stderr, "%s failed: head next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
+  if (tail->np[Head] != 0 || tail->np[Tail] != 0) {
+    fprintf(stderr, "%s failed: tail next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
+  deq_del(deqTest, 0);
+
+  //test for tail put
   i = 4;
+  p = &i;
+  deqTest = deq_new();
   deq_tail_put(deqTest, p); 
   
-  if (*(int *)(deq_tail_get(deqTest)) != 4) {
-    fprintf(stderr, "%s failed: Deq tail put/get failed%d\n", testName, deq_len(deqTest));
+  head = rep(deqTest)->ht[Head];
+  tail = rep(deqTest)->ht[Tail];
+  if (tail == 0 || head == 0) {
+     fprintf(stderr, "%s failed: head or tail are 0/null\n", testName);
+     return 1;
+  }
+
+  if (*(int *)(head->data) != 4 || *(int *)(tail->data) != 4) {
+    fprintf(stderr, "%s failed: head or tail are not correct value\n", testName);
     return 1;
   }
+
+  if (head->np[Head] != 0 || head->np[Tail] != 0) {
+    fprintf(stderr, "%s failed: head next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
+  if (tail->np[Head] != 0 || tail->np[Tail] != 0) {
+    fprintf(stderr, "%s failed: tail next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
   deq_del(deqTest, 0);
+
   fprintf(stderr, "%s passed\n", testName);
   return 0;
 }
 
 // test put with items in list (both head and tail)
+int test_put_non_empty(void) {
+  char testName[] = "Put in Non Empty List Test";
+
+  //test for head put
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3; int x = 4;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  int y = 5;
+  int *p = &y; 
+  
+  deq_head_put(deqTest, p);
+
+  Node head = rep(deqTest)->ht[Head];
+  Node tail = rep(deqTest)->ht[Tail];
+
+  if (tail == 0 || head == 0) {
+     fprintf(stderr, "%s failed: head or tail are 0/null\n", testName);
+     return 1;
+  }
+
+  if (*(int *)(head->data) != 5 || *(int *)(tail->data) != 4) {
+    fprintf(stderr, "%s failed: head or tail are not correct value\n", testName);
+    return 1;
+  }
+
+  if (*(int *)(head->np[Tail]->data) != 1 || head->np[Head] != 0) {
+    fprintf(stderr, "%s failed: head next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+  
+  if (tail->np[Tail] != 0 || *(int *)(tail->np[Head]->data) != 3) {
+    fprintf(stderr, "%s failed: tail next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
+  deq_del(deqTest, 0);
+
+  //test for tail put
+  deqTest = deq_new();
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  int z = 6;
+  int *p100 = &z; 
+  
+  deq_tail_put(deqTest, p100);
+
+  head = rep(deqTest)->ht[Head];
+  tail = rep(deqTest)->ht[Tail];
+
+  if (tail == 0 || head == 0) {
+     fprintf(stderr, "%s failed: head or tail are 0/null\n", testName);
+     return 1;
+  }
+
+  if (*(int *)(head->data) != 1 || *(int *)(tail->data) != 6) {
+    fprintf(stderr, "%s failed: head or tail are not correct value\n", testName);
+    return 1;
+  }
+
+  if (*(int *)(head->np[Tail]->data) != 2 || head->np[Head] != 0) {
+    fprintf(stderr, "%s failed: head next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+  
+  if (tail->np[Tail] != 0 || *(int *)(tail->np[Head]->data) != 4) {
+    fprintf(stderr, "%s failed: tail next and/or previous are incorrect\n", testName);
+    return 1;
+  }
+
+  deq_del(deqTest, 0);
+
+  fprintf(stderr, "%s passed\n", testName);
+  return 0;
+}
 // test put with null item
+// int test_put_null(void) {
+//   char testName[] = "Put Null Object Test";
+//   Deq deqTest = deq_new();
+//   char *x = NULL;
+//   deq_head_put(deqTest, x);
+//   printf("%d\n", deq_len(deqTest));
+//   printf("%d\n", (int)deq_head_get(deqTest));
+  
+//   deq_del(deqTest, 0);
+  
+
+//   fprintf(stderr, "%s passed\n", testName);
+//   return 0;
+// }
 // test get with empty list (both head and tail)
+// if (*(int *)(deq_head_get(deqTest)) != 3) {
+//     fprintf(stderr, "%s failed: Deq head get failed %d\n", testName, deq_len(deqTest));
+//     return 1;
+//   }
+// if (*(int *)(deq_tail_get(deqTest)) != 4) {
+//     fprintf(stderr, "%s failed: Deq tail put/get failed%d\n", testName, deq_len(deqTest));
+//     return 1;
+//   }
 // test get with items in list (both head and tail)
 // test ith with empty list (both head and tail / negative number and nonexistent positive index)
 // test ith with items in list (both head and tail / negative number and nonexistent positive index and existent index)
@@ -113,9 +269,10 @@ int test_put_empty(void) {
 int run_tests(void) {
   int status = 0;
   status += test_create_destroy();
-  status += test_put_empty();
   status += test_deq_len_empty();
   status += test_deq_len_full();
+  status += test_put_empty(); 
+  status += test_put_non_empty();
 
   return status;
 }
