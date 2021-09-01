@@ -32,21 +32,17 @@ void print_list(Deq deqTest) {
 }
 
 int main() {
-  // Deq deqTest = deq_new();
-  // int i = 3; int j = 2; int k = 1;
-  // int *p3 = &i; int *p2 = &j; int *p1 = &k;
-  // deq_head_put(deqTest, p3);
-  // print_list(deqTest);
-  // deq_head_put(deqTest, p2);
-  // print_list(deqTest);
-  // deq_head_put(deqTest, p1);
-  // print_list(deqTest);
-  // printf("%d\n", *(int *)deq_tail_get(deqTest));
+  Deq deqTest = deq_new();
+  int i = 3; int j = 2; int k = 1;
+  int *p3 = &i; int *p2 = &j; int *p1 = &k;
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+  printf("%d\n", *(int *)deq_head_rem(deqTest, p1));
 
-  // print_list(deqTest);
 
-  // deq_del(deqTest, 0);
-  int status = run_tests();
-  printf("Tests completed with status: %d\n", status);
+  deq_del(deqTest, 0);
+  // int status = run_tests();
+  // printf("Tests completed with status: %d\n", status);
   return 0;
 }
