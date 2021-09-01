@@ -96,7 +96,7 @@ int test_put_empty(void) {
      return 1;
   }
 
-  if (*(int *)(head->data) != 3 || *(int *)(tail->data) != 3) {
+  if (*(int *)(head->data) != 3 && *(int *)(tail->data) != 3) {
     fprintf(stderr, "%s failed: head or tail are not correct value\n", testName);
     return 1;
   }
@@ -230,38 +230,142 @@ int test_put_non_empty(void) {
   fprintf(stderr, "%s passed\n", testName);
   return 0;
 }
-// test put with null item
-// int test_put_null(void) {
-//   char testName[] = "Put Null Object Test";
-//   Deq deqTest = deq_new();
-//   char *x = NULL;
-//   deq_head_put(deqTest, x);
-//   printf("%d\n", deq_len(deqTest));
-//   printf("%d\n", (int)deq_head_get(deqTest));
-  
-//   deq_del(deqTest, 0);
-  
 
-//   fprintf(stderr, "%s passed\n", testName);
+// test get with item (both head and tail)
+int test_get_item(void) {
+  char testName[] = "Get Item Test";
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3; int x = 4;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  if (*(int *)(deq_head_get(deqTest)) != 1) {
+    fprintf(stderr, "%s failed: Deq head get failed\n", testName);
+    return 1;
+  }
+
+  if (*(int *)(deq_tail_get(deqTest)) != 4) {
+    fprintf(stderr, "%s failed: Deq tail get failed\n", testName);
+    return 1;
+  }
+  
+  deq_del(deqTest, 0);
+  fprintf(stderr, "%s passed\n", testName);
+  return 0;
+}
+
+// test ith with items in list (both head and tail)
+int test_ith(void) {
+  char testName[] = "Get Ith Item Test";
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3; int x = 4;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  if (*(int *)(deq_head_ith(deqTest, 1)) != 2) {
+    fprintf(stderr, "%s failed: Deq head ith failed\n", testName);
+    return 1;
+  }
+
+  if (*(int *)(deq_tail_ith(deqTest, 1)) != 3) {
+    fprintf(stderr, "%s failed: Deq tail ith failed\n", testName);
+    return 1;
+  }
+  
+  deq_del(deqTest, 0);
+  fprintf(stderr, "%s passed\n", testName);
+  return 0;
+}
+
+// test rem with item not in list (both head and tail) 
+int test_rem_no_item(void) {
+  char testName[] = "Rem No Item Test";
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3; int x = 4;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  int y = 5;
+  int *p5 = &y;
+
+  if ((deq_head_rem(deqTest, p5)) != 0) {
+    fprintf(stderr, "%s failed: Deq head rem failed\n", testName);
+    return 1;
+  }
+
+  if ((deq_tail_rem(deqTest, p5)) != 0) {
+    fprintf(stderr, "%s failed: Deq tail rem failed\n", testName);
+    return 1;
+  }
+  
+  deq_del(deqTest, 0);
+  fprintf(stderr, "%s passed\n", testName);
+  return 0;
+}
+
+// test rem with item in list
+int test_rem(void) {
+  char testName[] = "Rem Test";
+  Deq deqTest = deq_new();
+  int i = 1; int j = 2; int k = 3; int x = 4;
+  int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  deq_head_put(deqTest, p4);
+  deq_head_put(deqTest, p3);
+  deq_head_put(deqTest, p2);
+  deq_head_put(deqTest, p1);
+
+  if (*(int *)(deq_head_rem(deqTest, p3)) != 3) {
+    fprintf(stderr, "%s failed: Deq head rem failed\n", testName);
+    return 1;
+  }
+
+  if (*(int *)(deq_tail_rem(deqTest, p2)) != 2) {
+    fprintf(stderr, "%s failed: Deq tail rem failed\n", testName);
+    return 1;
+  }
+  
+  deq_del(deqTest, 0);
+  fprintf(stderr, "%s passed\n", testName);
+  return 0;
+}
+
+// void multiply_function(Data data) {
+//     int i = *(int *)data *2;
+//     data = &i;
+//     printf("%d\n", *(int *)data);
+// }
+
+// // test deq_map/deq_del/deq_st with a simple function????
+// int test_deq_map(void) {
+//   Deq deqTest = deq_new();
+//   int i = 1; int j = 2; int k = 3; int x = 4;
+//   int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+//   deq_head_put(deqTest, p4);
+//   deq_head_put(deqTest, p3);
+//   deq_head_put(deqTest, p2);
+//   deq_head_put(deqTest, p1);
+
+//   void (*fun_ptr)(Data) = &multiply_function;
+//   deq_map(deqTest, fun_ptr);
+
+//   Node head = rep(deqTest)->ht[Head];
+//   printf("%d\n", *(int *)head->data);
+//   Node next = head->np[Tail];
+//   while (next) {
+//     printf("%d\n", *(int *)next->data);
+//     next = next->np[Tail];
+//   }
 //   return 0;
 // }
-//
-// test get with empty list (both head and tail)
-// if (*(int *)(deq_head_get(deqTest)) != 3) {
-//     fprintf(stderr, "%s failed: Deq head get failed %d\n", testName, deq_len(deqTest));
-//     return 1;
-//   }
-// if (*(int *)(deq_tail_get(deqTest)) != 4) {
-//     fprintf(stderr, "%s failed: Deq tail put/get failed%d\n", testName, deq_len(deqTest));
-//     return 1;
-//   }
-// test get with items in list (both head and tail)
-// test ith with empty list (both head and tail / negative number and nonexistent positive index)
-// test ith with items in list (both head and tail / negative number and nonexistent positive index and existent index)
-// test rem with empty list (both head and tail) 
-// test rem with null item
-// test rem with items in list (both head and tail / check item not null)
-// test deq_map/deq_del/deq_st with a simple function????
 
 
 
@@ -274,6 +378,10 @@ int run_tests(void) {
   status += test_deq_len_full();
   status += test_put_empty(); 
   status += test_put_non_empty();
+  status += test_get_item();
+  status += test_ith();
+  status += test_rem_no_item();
+  status += test_rem();
 
   return status;
 }

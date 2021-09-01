@@ -25,40 +25,59 @@ static Rep rep(Deq q) {
 
 // Puts a piece of data (void *) in R (*Rep) at end e (Head (0)/Tail(1))
 static void put(Rep r, End e, Data d) {
-  if (r == NULL || d == NULL) {
-    fprintf(stderr, "invalid arguments to put call\n");
-    exit(-1);
-  }
-
-  if (e != Head || e != Tail) {
-    fprintf(stderr, "End is invalid\n");
-    exit(-1);
-  }
 
   Node newNode = (Node)malloc(sizeof(*newNode));
+  if (!newNode) {
+    ERROR("malloc() failed in put call");
+  }
   newNode->data = d;
+  newNode->np[Head] = 0;
+  newNode->np[Tail] = 0;
 
   if (r->len == 0) {
     newNode->np[Head] = 0;
     newNode->np[Tail] = 0;
     r->ht[Head] = newNode;
     r->ht[Tail] = newNode;
+    r->len++;
+    return;
   } else if (e == Head) {
-    Node head = r->ht[Head];
-    newNode->np[Tail] = head;
-    head->np[Head] = newNode;
+    newNode->np[Tail] = r->ht[Head];
+    r->ht[Head]->np[Head] = newNode;
     r->ht[Head] = newNode;
   } else {
-    Node tail = r->ht[Tail];
-    newNode->np[Head] = tail;
-    tail->np[Tail] = newNode;
+    newNode->np[Head] = r->ht[Tail];
+    r->ht[Tail]->np[Tail] = newNode;
     r->ht[Tail] = newNode;
   }
   r->len++;
 }
 
 static Data ith(Rep r, End e, int i) { return 0; }
-static Data get(Rep r, End e) { return 0; }
+static Data get(Rep r, End e) { 
+  if (r->len == 1) {
+    Node temp = r->ht[e];
+    r->ht[Head] = 0;
+    r->ht[Tail] = 0;
+    r->len--;
+    return temp->data;
+  }
+
+  Node end = r->ht[e];
+  Data data = end->data;
+
+  if (e == Head) {
+    r->ht[e] = end->np[Tail];
+    r->ht[e]->np[Head] = 0;
+    end->np[Tail] = 0;
+  } else {
+    r->ht[e] = end->np[Head];
+    r->ht[e]->np[Tail] = 0;
+    end->np[Head] = 0;
+  }
+  r->len--;
+  return data; 
+}
 static Data rem(Rep r, End e, Data d) { return 0; }
 
 extern Deq deq_new() {
