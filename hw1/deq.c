@@ -5,24 +5,6 @@
 #include "deq.h"
 #include "error.h"
 
-// indices and size of array of node pointers
-typedef enum {Head,Tail,Ends} End;
-
-typedef struct Node {
-  struct Node *np[Ends];		// next/prev neighbors
-  Data data;
-} *Node;
-
-typedef struct {
-  Node ht[Ends];			// head/tail nodes
-  int len;
-} *Rep;
-
-static Rep rep(Deq q) {
-  if (!q) ERROR("zero pointer");
-  return (Rep)q;
-}
-
 static void put(Rep r, End e, Data d) {
 
   Node newNode = (Node)malloc(sizeof(*newNode));
@@ -140,6 +122,11 @@ static Data rem(Rep r, End e, Data d) {
       }
   }
   return 0;
+}
+
+extern Rep rep(Deq q) {
+  if (!q) ERROR("zero pointer");
+  return (Rep)q;
 }
 
 extern Deq deq_new() {

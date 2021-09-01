@@ -11,23 +11,6 @@
 #include "deq.h"
 #include "error.h"
 
-typedef enum {Head,Tail,Ends} End;
-
-typedef struct Node {
-  struct Node *np[Ends];		// next/prev neighbors
-  Data data;
-} *Node;
-
-typedef struct {
-  Node ht[Ends];			// head/tail nodes
-  int len;
-} *Rep;
-
-static Rep rep(Deq q) {
-  if (!q) ERROR("zero pointer");
-  return (Rep)q;
-}
-
 // test create destroy deq
 int test_create_destroy(void){
   char testName[] = "Create Destroy Test";
