@@ -11,7 +11,6 @@
 #include "deq.h"
 #include "error.h"
 
-// declaring important variables from deq.c
 typedef enum {Head,Tail,Ends} End;
 
 typedef struct Node {
@@ -314,10 +313,12 @@ int test_rem_no_item(void) {
 
 // test rem with item in list
 int test_rem(void) {
+  
   char testName[] = "Rem Test";
   Deq deqTest = deq_new();
   int i = 1; int j = 2; int k = 3; int x = 4;
   int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
+  
   deq_head_put(deqTest, p4);
   deq_head_put(deqTest, p3);
   deq_head_put(deqTest, p2);
@@ -337,37 +338,6 @@ int test_rem(void) {
   fprintf(stderr, "%s passed\n", testName);
   return 0;
 }
-
-// void multiply_function(Data data) {
-//     int i = *(int *)data *2;
-//     data = &i;
-//     printf("%d\n", *(int *)data);
-// }
-
-// // test deq_map/deq_del/deq_st with a simple function????
-// int test_deq_map(void) {
-//   Deq deqTest = deq_new();
-//   int i = 1; int j = 2; int k = 3; int x = 4;
-//   int *p1 = &i; int *p2 = &j; int *p3 = &k; int *p4 = &x;
-//   deq_head_put(deqTest, p4);
-//   deq_head_put(deqTest, p3);
-//   deq_head_put(deqTest, p2);
-//   deq_head_put(deqTest, p1);
-
-//   void (*fun_ptr)(Data) = &multiply_function;
-//   deq_map(deqTest, fun_ptr);
-
-//   Node head = rep(deqTest)->ht[Head];
-//   printf("%d\n", *(int *)head->data);
-//   Node next = head->np[Tail];
-//   while (next) {
-//     printf("%d\n", *(int *)next->data);
-//     next = next->np[Tail];
-//   }
-//   return 0;
-// }
-
-
 
 // function to run all tests
 // returns 0 if all tests passed otherwise nonzero if fail

@@ -23,7 +23,6 @@ static Rep rep(Deq q) {
   return (Rep)q;
 }
 
-// Puts a piece of data (void *) in R (*Rep) at end e (Head (0)/Tail(1))
 static void put(Rep r, End e, Data d) {
 
   Node newNode = (Node)malloc(sizeof(*newNode));
@@ -66,6 +65,7 @@ static Data ith(Rep r, End e, int i) {
   }
   return next->data;
 }
+
 static Data get(Rep r, End e) { 
   if (r->len == 1) {
     Node temp = r->ht[e];
@@ -83,24 +83,23 @@ static Data get(Rep r, End e) {
     r->ht[e] = end->np[Tail];
     r->ht[e]->np[Head] = 0;
     end->np[Tail] = 0;
+    end->np[Head] = 0;
   } else {
     r->ht[e] = end->np[Head];
     r->ht[e]->np[Tail] = 0;
+    end->np[Tail] = 0;
     end->np[Head] = 0;
   }
   r->len--;
-  free(r->ht[e]);
+  free(end);
   return data; 
 }
+
 static Data rem(Rep r, End e, Data d) { 
-  // printf("%d\n", *(int *)d);
-  // printf("%d\n", r->len);
   Node current = r->ht[e];
   Node prev = 0;
   int i;
-  
   for (i = 0; i < r->len; i++) {
-      
       if (current->data == d) {
         if (i == 0 || r->len == 1) {
           return get(r, e);
@@ -122,9 +121,9 @@ static Data rem(Rep r, End e, Data d) {
             return data;
           } else {
             prev->np[Head] = current->np[Head];
-            current->np[Head]->np[Head] = prev;
-            current->np[Head] = 0;
+            current->np[Head]->np[Tail] = prev;
             current->np[Tail] = 0;
+            current->np[Head] = 0;
             r->len--;
             Data data = current->data;
             free(current);
@@ -140,7 +139,7 @@ static Data rem(Rep r, End e, Data d) {
         }
       }
   }
-  return current->data;
+  return 0;
 }
 
 extern Deq deq_new() {
