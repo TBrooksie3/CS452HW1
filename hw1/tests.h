@@ -1,7 +1,7 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-extern int run_tests(void);
+int run_tests(void);
 
 extern int test_create_destroy(void);
 

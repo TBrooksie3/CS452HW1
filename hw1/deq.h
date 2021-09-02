@@ -9,20 +9,6 @@
 typedef void *Deq;
 typedef void *Data;
 
-typedef enum {Head,Tail,Ends} End;
-
-typedef struct Node {
-  struct Node *np[Ends];		// next/prev neighbors
-  Data data;
-} *Node;
-
-typedef struct {
-  Node ht[Ends];			// head/tail nodes
-  int len;
-} *Rep;
-
-extern Rep rep(Deq q);
-
 extern Deq deq_new();
 extern int deq_len(Deq q);
 

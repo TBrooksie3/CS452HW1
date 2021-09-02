@@ -5,8 +5,19 @@
 #include "deq.h"
 #include "error.h"
 
-static void put(Rep r, End e, Data d) {
+typedef enum {Head,Tail,Ends} End;
 
+typedef struct Node {
+  struct Node *np[Ends];		// next/prev neighbors
+  Data data;
+} *Node;
+
+typedef struct {
+  Node ht[Ends];			// head/tail nodes
+  int len;
+} *Rep;
+
+static void put(Rep r, End e, Data d) {
   Node newNode = (Node)malloc(sizeof(*newNode));
   if (!newNode) {
     ERROR("malloc() failed in put call");
@@ -63,7 +74,7 @@ static Data get(Rep r, End e) {
 
   if (e == Head) {
     r->ht[e] = end->np[Tail];
-    r->ht[e]->np[Head] = 0;
+    r->ht[e]->np[e] = 0;
     end->np[Tail] = 0;
     end->np[Head] = 0;
   } else {
@@ -124,7 +135,7 @@ static Data rem(Rep r, End e, Data d) {
   return 0;
 }
 
-extern Rep rep(Deq q) {
+static Rep rep(Deq q) {
   if (!q) ERROR("zero pointer");
   return (Rep)q;
 }
