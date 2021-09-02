@@ -23,24 +23,20 @@ static void put(Rep r, End e, Data d) {
     ERROR("malloc() failed in put call");
   }
   newNode->data = d;
-  newNode->np[Head] = 0;
-  newNode->np[Tail] = 0;
+  newNode->np[e] = 0;
+  newNode->np[!e] = 0;
 
   if (r->len == 0) {
-    newNode->np[Head] = 0;
-    newNode->np[Tail] = 0;
-    r->ht[Head] = newNode;
-    r->ht[Tail] = newNode;
+    newNode->np[e] = 0;
+    newNode->np[!e] = 0;
+    r->ht[e] = newNode;
+    r->ht[!e] = newNode;
     r->len++;
     return;
-  } else if (e == Head) {
-    newNode->np[Tail] = r->ht[Head];
-    r->ht[Head]->np[Head] = newNode;
-    r->ht[Head] = newNode;
   } else {
-    newNode->np[Head] = r->ht[Tail];
-    r->ht[Tail]->np[Tail] = newNode;
-    r->ht[Tail] = newNode;
+    newNode->np[!e] = r->ht[e];
+    r->ht[e]->np[e] = newNode;
+    r->ht[e] = newNode;
   }
   r->len++;
 }
@@ -50,11 +46,7 @@ static Data ith(Rep r, End e, int i) {
   int j;
   
   for (j = 0;j < i; j++) {
-     if (e == Head) {
-      next = next->np[Tail];
-    } else {
-        next = next->np[Head];
-    }
+    next = next->np[!e];
   }
   return next->data;
 }
@@ -62,8 +54,8 @@ static Data ith(Rep r, End e, int i) {
 static Data get(Rep r, End e) { 
   if (r->len == 1) {
     Node temp = r->ht[e];
-    r->ht[Head] = 0;
-    r->ht[Tail] = 0;
+    r->ht[e] = 0;
+    r->ht[!e] = 0;
     r->len--;
     free(r->ht[e]);
     return temp->data;
@@ -72,17 +64,11 @@ static Data get(Rep r, End e) {
   Node end = r->ht[e];
   Data data = end->data;
 
-  if (e == Head) {
-    r->ht[e] = end->np[Tail];
-    r->ht[e]->np[e] = 0;
-    end->np[Tail] = 0;
-    end->np[Head] = 0;
-  } else {
-    r->ht[e] = end->np[Head];
-    r->ht[e]->np[Tail] = 0;
-    end->np[Tail] = 0;
-    end->np[Head] = 0;
-  }
+  r->ht[e] = end->np[!e];
+  r->ht[e]->np[e] = 0;
+  end->np[!e] = 0;
+  end->np[e] = 0;
+
   r->len--;
   free(end);
   return data; 
@@ -97,39 +83,20 @@ static Data rem(Rep r, End e, Data d) {
         if (i == 0 || r->len == 1) {
           return get(r, e);
         } else if (i == (r->len - 1)) {
-            if (e == Head) {
-              return get(r, Tail);
-            } else {
-              return get(r, Head);
-            }
+          return get(r,!e);
         } else {
-          if (e == Head) {
-            prev->np[Tail] = current->np[Tail];
-            current->np[Tail]->np[Head] = prev;
-            current->np[Head] = 0;
-            current->np[Tail] = 0;
-            r->len--;
-            Data data = current->data;
-            free(current);
-            return data;
-          } else {
-            prev->np[Head] = current->np[Head];
-            current->np[Head]->np[Tail] = prev;
-            current->np[Tail] = 0;
-            current->np[Head] = 0;
-            r->len--;
-            Data data = current->data;
-            free(current);
-            return data;
-          }
+          prev->np[!e] = current->np[!e];
+          current->np[!e]->np[e] = prev;
+          current->np[e] = 0;
+          current->np[!e] = 0;
+          r->len--;
+          Data data = current->data;
+          free(current);
+          return data;
         }
       } else {
         prev = current;
-        if (e == Head) {
-          current = current->np[Tail];
-        } else {
-          current = current->np[Head];
-        }
+        current = current->np[!e];
       }
   }
   return 0;
