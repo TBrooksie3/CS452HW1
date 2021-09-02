@@ -135,7 +135,7 @@ static Data rem(Rep r, End e, Data d) {
   return 0;
 }
 
-static Rep rep(Deq q) {
+extern Rep rep(Deq q) {
   if (!q) ERROR("zero pointer");
   return (Rep)q;
 }
