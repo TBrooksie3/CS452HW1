@@ -1,3 +1,11 @@
+// /*
+//  * File: deq.c
+//  * Author: Taylor Brooks & Professor Jim Buffenbarger
+//  * Date: Sat 28 Aug 2021
+//  * Description: Doubly linked list source file that implements all necessary list functions
+//  *              Taylor Brooks - Doubly linked list put/get/ith/rem function implementations
+//  *              Professor Jim Buffenbarger - Other functions
+//  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,19 +13,21 @@
 #include "deq.h"
 #include "error.h"
 
-typedef enum {Head,Tail,Ends} End;
-
-typedef struct Node {
-  struct Node *np[Ends];		// next/prev neighbors
-  Data data;
-} *Node;
-
-typedef struct {
-  Node ht[Ends];			// head/tail nodes
-  int len;
-} *Rep;
-
+/* put: generic put data function that appends data on a specific end of the list
+ * r - Rep structure that represents the list
+ * e - enum either Head (0) or Tail (1) to append to
+ * d - Data that is going to be attached to a Node and inserted
+ * 
+ * returns - void
+ *         - Error on putting null data
+ */
 static void put(Rep r, End e, Data d) {
+  if (!r) {
+    ERROR("Deq is null");
+  }
+  if (!d) {
+    ERROR("cannot put null data");
+  }
   Node newNode = (Node)malloc(sizeof(*newNode));
   if (!newNode) {
     ERROR("malloc() failed in put call");
@@ -41,9 +51,23 @@ static void put(Rep r, End e, Data d) {
   r->len++;
 }
 
+/* ith: generic ith data function that returns (but does not remove) the data of the ith object in list from a specific end
+ * r - Rep structure that represents the list
+ * e - enum either Head (0) or Tail (1) to start counting from
+ * i - int index to remove from specific end (end is index 0)
+ * 
+ * returns - Data the data in the node at the specific index from the end
+ *         - Error on ith from empty list or i that is < 0 or > list length
+ */
 static Data ith(Rep r, End e, int i) { 
+  if (!r) {
+    ERROR("Deq is null");
+  }
   if (r->len == 0) {
     ERROR("Cannot ith from empty list");
+  }
+  if (i < 0 || i >= r->len) {
+    ERROR("Cannot call ith with negative index or greater than or equal to list length");
   }
   Node next = r->ht[e];
   int j;
@@ -54,7 +78,17 @@ static Data ith(Rep r, End e, int i) {
   return next->data;
 }
 
+/* get: generic get data function that removes and returns the data from a specific end.
+ * r - Rep structure that represents the list
+ * e - enum either Head (0) or Tail (1) to remove from
+ * 
+ * returns - Data the data in the node at the specific end
+ *         - Error on getting from empty list
+ */
 static Data get(Rep r, End e) { 
+  if (!r) {
+    ERROR("Deq is null");
+  }
   if (r->len == 0) {
     ERROR("Cannot get from empty list");
   }
@@ -80,7 +114,21 @@ static Data get(Rep r, End e) {
   return data; 
 }
 
+/* rem: generic rem data function that searches the list for a specific data and removes and returns the data
+ * r - Rep structure that represents the list
+ * e - enum either Head (0) or Tail (1) to start search from
+ * d - Data index to remove from specific end (end is index 0)
+ * 
+ * returns - Data that is going to be searched for or 0/null if not found
+ *         - Error on rem from empty list
+ */
 static Data rem(Rep r, End e, Data d) { 
+  if (!r) {
+    ERROR("Deq is null");
+  }
+  if (!d) {
+    ERROR("Cannot get null data");
+  }
   if (r->len == 0) {
     ERROR("Cannot rem from empty list");
   }

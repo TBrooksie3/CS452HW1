@@ -1,13 +1,30 @@
+// /*
+//  * File: deq.h
+//  * Author: Taylor Brooks & Professor Jim Buffenbarger
+//  * Date: Sat 28 Aug 2021
+//  * Description: Doubly linked list (deq) header file where functions and types are declared
+//  *              Taylor Brooks - Moved type definitions to header file as well as adding rep function to be used in tests
+//  *              Professor Jim Buffenbarger - Other functions/type declarations
+//  */
 #ifndef DEQ_H
 #define DEQ_H
 
-// put: append onto an end, len++
-// get: return from an end, len--
-// ith: return by 0-base index, len unchanged
-// rem: return by == comparing, len-- (iff found)
-
 typedef void *Deq;
 typedef void *Data;
+
+typedef enum {Head,Tail,Ends} End;
+
+typedef struct Node {
+  struct Node *np[Ends];		// next/prev neighbors
+  Data data;
+} *Node;
+
+typedef struct {
+  Node ht[Ends];			// head/tail nodes
+  int len;
+} *Rep;
+
+extern Rep rep(Deq q);
 
 extern Deq deq_new();
 extern int deq_len(Deq q);

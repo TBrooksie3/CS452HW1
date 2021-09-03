@@ -1,19 +1,11 @@
+// /*
+//  * File: deq.h
+//  * Author: Taylor Brooks
+//  * Date: Sat 28 Aug 2021
+//  * Description: Unit tests for double ended doubly linked list header file
+//  */
 #ifndef TESTS_H
 #define TESTS_H
-
-typedef enum {Head,Tail,Ends} End;
-
-typedef struct Node {
-  struct Node *np[Ends];		// next/prev neighbors
-  Data data;
-} *Node;
-
-typedef struct {
-  Node ht[Ends];			// head/tail nodes
-  int len;
-} *Rep;
-
-extern Rep rep(Deq q);
 
 extern int run_tests(void);
 
