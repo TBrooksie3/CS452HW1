@@ -42,6 +42,9 @@ static void put(Rep r, End e, Data d) {
 }
 
 static Data ith(Rep r, End e, int i) { 
+  if (r->len == 0) {
+    ERROR("Cannot ith from empty list");
+  }
   Node next = r->ht[e];
   int j;
   
@@ -52,6 +55,9 @@ static Data ith(Rep r, End e, int i) {
 }
 
 static Data get(Rep r, End e) { 
+  if (r->len == 0) {
+    ERROR("Cannot get from empty list");
+  }
   if (r->len == 1) {
     Node temp = r->ht[e];
     r->ht[e] = 0;
@@ -75,6 +81,9 @@ static Data get(Rep r, End e) {
 }
 
 static Data rem(Rep r, End e, Data d) { 
+  if (r->len == 0) {
+    ERROR("Cannot rem from empty list");
+  }
   Node current = r->ht[e];
   Node prev = 0;
   int i;
